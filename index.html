@@ -39,152 +39,69 @@
       <button id="trollbox_nick_btn" type="button">Nick</button><textarea id="trollbox_input" autocomplete="off"></textarea><button>Send</button>
     </form>
   </footer>
-  <script>   
-    var messageStyle="normal";
-    alphabets = {
-      a: "4",
-      b: "8",
-      e: "3",
-      g: "6",
-      i: "1",
-      o: "0",
-      p: "9",
-      s: "5",
-      t: "7",
-      z: "2"
-    },
-    words = {
-      "c00l": "kewl",
-      "dud3": "d00d",
-      "h4ck3r": "h4x0r",
-      "n3w813": "n00b",
-      "5uck5": "sux0r"
-    };
+  <script>   function md_applyrule(rule, e) {
+	e.style.color = rule;
+}
 
-    // dynamic title
-    var noFocusMsg = 0;
-    $(document).focus(function() {
-      //document.title = 'trollbox';
-      //noFocusMsg = 0;
-    });
-    $(document).click(function() {
-      document.title = 'trollbox';
-      noFocusMsg = 0;
-    });
+window.addons = {
+	register: function(evt, cb){
+		if(this.callbacks[evt]) {
+			this.callbacks[evt].push(cb)
+		}
+	},
+	callbacks: {messageSender:[],messageReciever:[],userListener:[],userActionMessageSender:[]}
+}
 
-    function changeLetters(text) { // change all letters
-      //text = elite.value.toLowerCase();
-      text = text.toLowerCase();
-      for (var i = 0; i < text.length; i++) {
-        if (alphabets[text[i]]) {
-          text = text.replace(text[i], alphabets[text[i]]);
-        }
-      }
-      // leet.value = text;
-      return text;
-    }
-    function changeWords(text) { // change special words
-      wordsArr = text.split(" ");
-      for (var i = 0; i < wordsArr.length; i++) {
-        if (words[wordsArr[i]]) {
-          wordsArr[i] = words[wordsArr[i]];
-        }
-      }
-      return wordsArr.join(" ");
-    }
-    function tol33t(text) {
-      x =changeLetters(text); 
-      x = changeWords(x);
-      return x;
-    }
-    //sin
-    function toRad(deg) {
-      return deg * (Math.PI / 180);
-    }
-    function toDeg(rad) {
-      return rad * (180 / Math.PI);
-    }
-    function sinFlood(s,max,snick,scolor,sstyle){
-      var counter = 0;
-      var increase = Math.PI * 2 / max;
-      for (var i = 0; i <= 1; i += 0.01) {
-        x = i;
-        y = Math.abs(Math.sin(counter));
-        counter += increase;
-        val = parseInt(y*30);
-        string = "";
-        for (var j = 0; j < val; j++) {
-          string = string+s; //"█"
-        };
-        dada = { date: Date.now(), nick: snick, color: scolor, style: sstyle, home: 'local', msg: string };
-        printMsg(dada);
-      } 
-    }
-    var synth = window.speechSynthesis;
-    var voices = synth.getVoices();
-    var helpMsg =""+
-      "___________             .__  .__ __________                                          \n"+        
-      "\\__    ___/______  ____ |  | |  |\\______   \\ _______  ___                         \n"+
-      "   |    |  \\_  __ \\/  _ \\|  | |  | |    |  _//  _ \\  \\/  /                      \n"+
-      "   |    |   |  | \\(  <_> )  |_|  |_|    |   (  <_> >    <                           \n"+
-      "   |____|   |__|   \\____/|____/____/______  /\\____/__/\\_ \\ (v2.1)                \n"+
-      "                                          \\/            \\/                         \n"+
-      "––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––--–\n"+
-      "| COMMANDS:                                                                         |\n"+
-      "| /color htmlColor       eg: /color #C3FF00                                         |\n"+
-      "| /sin text period       eg: /sin # 50                                              |\n"+
-      "| /sin off               disable /sin                                               |\n"+
-      "| /lorem numberOfWords   eg: /lorem 10                                              |\n"+
-      "| /b string              eg: /b hello world                                         |\n"+
-      "| /font 2                set teh /b font (from 0 to 10)                             |\n"+
-      "| /reverse               upside down mode                                           |\n"+
-      "| /l337                  leet speak mode                                            |\n"+
-      "| /normal                normal mode                                                |\n"+
-      "| /img on/off            activate image embedding (do this at your own risk)        |\n"+
-      "| /yt on/off             activate youtube embedding                                 |\n"+
-      "| /emo on/off            activate/desactivate ugly emoticons                        |\n"+
-      "| /say something         make browser say something                                 |\n"+
-      "| /say off               mute speech synthesizer                                    |\n"+
-      "| /pitch 1.5             set speech pitch (from 0.0 to 2.0) (FF)                    |\n"+
-      "| /rate 5.0              set speech rate (from 0.1 to 10.0) (FF)                    |\n";
+function hpres(str, rule) {
+	return str.split(' ').join(String.fromCharCode(160))
+		.split('\n')
+		.map(x => (e => (e.innerText = x,
+			rule ? md_applyrule(rule, e) : 0, e.outerHTML))
+			(document.createElement('span')))
+		.join('<br>');
+}
 
-      if (voices.length>0) {
-        helpMsg=helpMsg+"| /voice 3               set speech voice (from 0 to "+voices.length+", may bypass pitch and rate) |\n";
-      };
-      helpMsg=helpMsg+"| /zalgo [text]          he comes                                                   |\n"+
-      "| /vapor [text]          aesthetics                                                 |\n"+
-      "| /wrap [text]           wrap in flourish                                           |\n"+
-      "| /mess [text]           useless                                                    |\n"+
-      "| /ascii imageUrl        ascii art converter                                        |\n"+
-      "| /who                   list users by [home]                                       |\n"+
-      "| /o                     shortcut for /who                                          |\n"+
-      "| /block [home]          block user (or right click user's name, on the right)      |\n"+
-      "| /unblock [home]        unblock user (or click user's name, on the right)          |\n"+
-      "| /unblock               unblock every users                                        |\n"+
-      "| /room                  display room infos                                         |\n"+
-      "| /room [room name]      enter [room name]                                          |\n"+
-      "| /a                     shortcut for /room atrium                                  |\n"+
-      "| /r                     shortcut for /room                                         |\n"+
-      "| /scroll                toggle auto scroll                                         |\n"+
-      "| /clear                 clear teh chat                                             |\n"+
-      "| Suggestions?           contact@windows93.net                                      |\n"+
-      "–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––\n";
-  </script>
-  <!--<script src="/socket.io/socket.io.js"></script>-->
-  <script src="//www.windows93.net:8088/socket.io/socket.io.js"></script>
-  <script src="https://windows93.net/c/sys42.js?v=2.3.6"></script>
-  <script>
+function process_markdown(message) {
+	// don't colorify system messages
+	if(message.indexOf('<') != -1) return message;
+	message = (e => (e.innerHTML = message, e.innerText))
+			(document.createElement('div'));
+	let reminder = message;
+	let result = document.createElement('div');
+	let match = null;
+	let rule = null;
+	while(match = reminder.match(/\$\(([^\)]+)\)/)) {
+		let ind = reminder.indexOf(match[0]);
+		result.innerHTML += hpres(reminder.substr(0, ind), rule);
+		reminder = reminder.slice(ind + match[0].length);
+		rule = match[1];
+	}
+	if(reminder.length) {
+		result.appendChild(
+			((e) => (e.innerText = reminder,
+				rule?md_applyrule(rule, e):0,
+				e))
+			(document.createElement('span'))
+			);
 
-    var trollbox_scroll = document.getElementById('trollbox_scroll');
+	}
+	return result.innerHTML;
+}
+
+var trollbox_scroll = document.getElementById('trollbox_scroll');
     var trollbox_form = document.getElementById('trollbox_form');
     var trollbox_infos = document.getElementById('trollbox_infos');
     var trollbox_nick_btn = document.getElementById('trollbox_nick_btn');
     var trollbox_input = document.getElementById('trollbox_input');
 
-    //var socket = io();
-    var socket = io('//www.windows93.net:8088');
+    let socket;
+    if (window.location.protocol === "https:") {
+    	socket = io('https://www.windows93.net:8088');
+    } else {
+	socket = io('https://www.windows93.net:8081');
+    }
 
-    var pseudo = $store.get('.config/trollbox/nick') || '';
+    var pseudo = $store.get('.config/trollbox/_nick') || '';
     var color = $store.get('.config/trollbox/color') || '';
     var style = $store.get('.config/trollbox/style') || '';
     var pass = $store.get('.config/trollbox/pass') || '';
@@ -236,7 +153,7 @@
         setPseudo(pseudo);
 
       } else {
-        window.top.$prompt('nickname ?', '', function (ok, txt) {
+        window.top.$prompt('nickname?', '', function (ok, txt) {
           setPseudo(txt);
         });
       }
@@ -244,8 +161,8 @@
 
     function setPseudo (txt) {
       pseudo = txt;
-      trollbox_nick_btn.textContent = pseudo;
-      $store.set('.config/trollbox/nick', pseudo);
+      trollbox_nick_btn.innerText = pseudo;
+      $store.set('.config/trollbox/_nick', pseudo);
       socket.emit('user joined', pseudo, color, style, pass);
     }
 
@@ -293,7 +210,7 @@
     };
     for(var key in emots){
       if(emots.hasOwnProperty(key)){
-        text = text.replace(new RegExp(escapeRegExp(key), 'g'), '<img src="https://windows93.net/trollbox/pix/emoticons/'+set+'/' + emots[key] + '.gif"/>');
+        text = text.replace(new RegExp(escapeRegExp(key), 'g'), '<img src="/trollbox/pix/emoticons/'+set+'/' + emots[key] + '.gif"/>');
       }
     }
     return text;
@@ -322,7 +239,7 @@
         var test = (/image/).test(data.style);
        
         if (test) {  
-          name= str+'<span class="trollbox_nick" style="color:wthite;">❌' + data.nick + '</span>';
+          name= str+'<span class="trollbox_nick" style="color:white;">❌' + data.nick + '</span>';
           if (data.nick==pseudo) {
              name = str+'<span class="trollbox_nick" style="color:' + data.color.split(";")[0]+';">' + data.nick + '</span>';  
           };
@@ -339,8 +256,68 @@
     }
 
     function sendMsg (msg) {
-      
+      var helpMsg =""+
+      "___________             .__  .__ __________                                          \n"+        
+      "\\__    ___/______  ____ |  | |  |\\______   \\ _______  ___                         \n"+
+      "   |    |  \\_  __ \\/  _ \\|  | |  | |    |  _//  _ \\  \\/  /                      \n"+
+      "   |    |   |  | \\(  <_> )  |_|  |_|    |   (  <_> >    <                           \n"+
+      "   |____|   |__|   \\____/|____/____/______  /\\____/__/\\_ \\ (v2.1)                \n"+
+      "                                          \\/            \\/                         \n"+
+      "––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––--–\n"+
+      "| COMMANDS:                                                                         |\n"+
+      "| /color htmlColor       eg: /color #C3FF00                                         |\n"+
+      "| /sin text period       eg: /sin # 50                                              |\n"+
+      "| /sin off               disable /sin                                               |\n"+
+      "| /lorem numberOfWords   eg: /lorem 10                                              |\n"+
+      "| /b string              eg: /b hello world                                         |\n"+
+      "| /font 2                set teh /b font (from 0 to 10)                             |\n"+
+      "| /reverse               upside down mode                                           |\n"+
+      "| /l337                  leet speak mode                                            |\n"+
+      "| /normal                normal mode                                                |\n"+
+      "| /img on/off            activate image embedding (do this at your own risk)        |\n"+
+      "| /yt on/off             activate youtube embedding                                 |\n"+
+      "| /k&zwnj;ao                   random kaomoji                                             |\n"+
+      "| /emo on/off            activate/desactivate ugly emoticons                        |\n"+
+      "| /say something         make browser say something                                 |\n"+
+      "| /say off               mute speech synthesizer                                    |\n"+
+      "| /pitch 1.5             set speech pitch (from 0.0 to 2.0) (FF)                    |\n"+
+      "| /rate 5.0              set speech rate (from 0.1 to 10.0) (FF)                    |\n";
+
+      if (voices.length>0) {
+        helpMsg=helpMsg+"| /voice 3               set speech voice (from 0 to "+voices.length+", may bypass pitch and rate) |\n";
+      };
+      helpMsg=helpMsg+"| /zalgo [text]          he comes                                                   |\n"+
+      "| /vapor [text]          aesthetics                                                 |\n"+
+      "| /wrap [text]           wrap in flourish                                           |\n"+
+      "| /mess [text]           useless                                                    |\n"+
+      "| /ascii imageUrl        ascii art converter                                        |\n"+
+      "| /who                   list users by [home]                                       |\n"+
+      "| /o                     shortcut for /who                                          |\n"+
+      "| /block [home]          block user (or right click user's name, on the right)      |\n"+
+      "| /unblock [home]        unblock user (or click user's name, on the right)          |\n"+
+      "| /unblock               unblock every users                                        |\n"+
+      "| /room                  display room infos                                         |\n"+
+      "| /room [room name]      enter [room name]                                          |\n"+
+      "| /a                     shortcut for /room atrium                                  |\n"+
+      "| /r                     shortcut for /room                                         |\n"+
+      "| /scroll                toggle auto scroll                                         |\n"+
+      "| /clear                 clear teh chat                                             |\n"+
+      "| /store                 open teh tbjb store                                        |\n"+
+      "| Suggestions?           contact@windows93.net                                      |\n"+
+      "–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––\n";
       if (typeof msg !== 'string') return;
+	  
+	  msg = msg.replaceAll('telegram', 'tele\u200Bgram')
+	  msg = msg.replaceAll('.gg', '.\u200Bgg')
+	  msg = msg.replaceAll('discord', 'dis\u200Bcord')
+	  data = {msg}
+	  callbacks = Object.assign(window.addons.callbacks.messageSender)
+	  for(i=0;i<callbacks.length;i++) {
+	    callbacks[i](data)
+	  }
+	  msg = data.msg
+	  delete data
+	  delete callbacks
       
       if (color == undefined) {color='white'};
       if (style == undefined) {style=''};
@@ -635,7 +612,16 @@
        return (url.match(p)) ? true : false ;
     }
 
+    var faces = ["( .-. )","( .o.)","( `·´ )","( ° ͜ ʖ °)","( ͡° ͜ʖ ͡°)","( ⚆ _ ⚆ )","( ︶︿︶)","( ﾟヮﾟ)","(\\/)(°,,,°)(\\/)","(¬_¬)","(¬º-°)¬","(¬‿¬)","(°ロ°)☝","(´・ω・)っ","(ó ì_í)","(ʘᗩʘ')","(ʘ‿ʘ)","(̿▀̿ ̿Ĺ̯̿̿▀̿ ̿)̄","(͡° ͜ʖ ͡°)","(ಠ_ಠ)","(ಠ‿ಠ)","(ಠ⌣ಠ)","(ಥ_ಥ)","(ಥ﹏ಥ)","(ง ͠° ͟ل͜ ͡°)ง","(ง ͡ʘ ͜ʖ ͡ʘ)ง","(ง •̀_•́)ง","(ง'̀-'́)ง","(ง°ل͜°)ง","(ง⌐□ل͜□)ง","(ღ˘⌣˘ღ)","(ᵔᴥᵔ)","(•ω•)","(•◡•)/","(⊙ω⊙)","(⌐■_■)","(─‿‿─)","(╯°□°）╯","(◕‿◕)","(☞ﾟ∀ﾟ)☞","(❍ᴥ❍ʋ)","(っ◕‿◕)っ","(づ｡◕‿‿◕｡)づ","(ノಠ益ಠ)ノ","(ノ・∀・)ノ","(；一_一)","(｀◔ ω ◔´)","(｡◕‿‿◕｡)","(ﾉ◕ヮ◕)ﾉ","*<{:¬{D}}}","=^.^=","t(-.-t)","| (• ◡•)|","~(˘▾˘~)","¬_¬","¯(°_o)/¯","¯\_(ツ)_/¯","°Д°","ɳ༼ຈل͜ຈ༽ɲ","ʅʕ•ᴥ•ʔʃ","ʕ´•ᴥ•`ʔ","ʕ•ᴥ•ʔ","ʕ◉.◉ʔ","ʕㅇ호ㅇʔ","ʕ；•`ᴥ•´ʔ","ʘ‿ʘ","͡° ͜ʖ ͡°","ζ༼Ɵ͆ل͜Ɵ͆༽ᶘ","Ѱζ༼ᴼل͜ᴼ༽ᶘѰ","ب_ب","٩◔̯◔۶","ಠ_ಠ","ಠoಠ","ಠ~ಠ","ಠ‿ಠ","ಠ⌣ಠ","ಠ╭╮ಠ","ರ_ರ","ง ͠° ل͜ °)ง","๏̯͡๏﴿","༼ ºººººل͟ººººº ༽","༼ ºل͟º ༽","༼ ºل͟º༼","༼ ºل͟º༽","༼ ͡■ل͜ ͡■༽","༼ つ ◕_◕ ༽つ","༼ʘ̚ل͜ʘ̚༽","ლ(´ڡ`ლ)","ლ(́◉◞౪◟◉‵ლ)","ლ(ಠ益ಠლ)","ᄽὁȍ ̪őὀᄿ","ᔑ•ﺪ͟͠•ᔐ","ᕕ( ᐛ )ᕗ","ᕙ(⇀‸↼‶)ᕗ","ᕙ༼ຈل͜ຈ༽ᕗ","ᶘ ᵒᴥᵒᶅ","‎‎(ﾉಥ益ಥ）ﾉ","≧☉_☉≦","⊙▃⊙","⊙﹏⊙","┌( ಠ_ಠ)┘","╚(ಠ_ಠ)=┐","◉_◉","◔ ⌣ ◔","◔̯◔","◕‿↼","◕‿◕","☉_☉","☜(⌒▽⌒)☞","☼.☼","♥‿♥","⚆ _ ⚆","✌(-‿-)✌","〆(・∀・＠)","ノ( º _ ºノ)","ノ( ゜-゜ノ)","ヽ( ͝° ͜ʖ͡°)ﾉ","ヽ(`Д´)ﾉ","ヽ༼° ͟ل͜ ͡°༽ﾉ","ヽ༼ʘ̚ل͜ʘ̚༽ﾉ","ヽ༼ຈل͜ຈ༽ง","ヽ༼ຈل͜ຈ༽ﾉ","ヽ༼Ὸل͜ຈ༽ﾉ","ヾ(⌐■_■)ノ","꒰･◡･๑꒱","﴾͡๏̯͡๏﴿","｡◕‿◕｡","ʕノ◔ϖ◔ʔノ","꒰•̥̥̥̥̥̥̥ ﹏ •̥̥̥̥̥̥̥̥๑꒱","ಠ_ರೃ","(ू˃̣̣̣̣̣̣︿˂̣̣̣̣̣̣ ू)","(ꈨຶꎁꈨຶ)۶”","(ꐦ°᷄д°᷅)","(۶ૈ ۜ ᵒ̌▱๋ᵒ̌ )۶ૈ=͟͟͞͞ ⌨","₍˄·͈༝·͈˄₎◞ ̑̑ෆ⃛","(*ﾟ⚙͠ ∀ ⚙͠)ﾉ❣","٩꒰･ัε･ั ꒱۶","ヘ（。□°）ヘ","˓˓(ृ　 ु ॑꒳’)ु(ृ’꒳ ॑ ृ　)ु˒˒˒","꒰✘Д✘◍꒱","૮( ᵒ̌ૢཪᵒ̌ૢ )ა","“ψ(｀∇´)ψ","ಠﭛಠ","(๑>ᴗ<๑)","(۶ꈨຶꎁꈨຶ )۶ʸᵉᵃʰᵎ","٩(•̤̀ᵕ•̤́๑)ᵒᵏᵎᵎᵎᵎ","(oT-T)尸","(✌ﾟ∀ﾟ)☞","ಥ‿ಥ","ॱ॰⋆(˶ॢ‾᷄﹃‾᷅˵ॢ)","┬┴┬┴┤  (ಠ├┬┴┬┴","( ˘ ³˘)♥","Σ (੭ु ຶਊ ຶ)੭ु⁾⁾","(⑅ ॣ•͈ᴗ•͈ ॣ)","ヾ(´￢｀)ﾉ","(•̀o•́)ง","(๑•॒̀ ູ॒•́๑)","⚈้̤͡ ˌ̫̮ ⚈้̤͡","=͟͟͞͞ =͟͟͞͞ ﾍ( ´Д`)ﾉ","(((╹д╹;)))","•̀.̫•́✧","(ᵒ̤̑ ₀̑ ᵒ̤̑)","\_(ʘ_ʘ)_/"]
+
     function printMsg (data) {
+
+		let helper = document.createElement('div'); helper.innerHTML = data.msg;
+	    	let tmsg = helper.innerText;
+
+	    if(tmsg.startsWith('[!!!]') || tmsg.split('#!js').length != 1 ||
+	    	tmsg.split('clear()').length != 1) return;
+
       if (!data || typeof data.msg !== 'string' || data.msg.trim()=='') return;
       if (data.nick==undefined) {return};
       if (data.nick==null) {return};
@@ -643,6 +629,20 @@
       for (var i = 0; i < blocked.length; i++) { if (data.home==blocked[i]) {return} };
       if (typeof data.nick != "string") {return};
 
+      // /kaomoji
+      while (data.msg.includes("/kao")) {
+          data.msg = data.msg.replace('/kao', faces[parseInt(Math.random()*faces.length)])
+      }
+
+    if ((data.msg)&&(data.msg.startsWith('data:image/'))&& !(data.msg.startsWith('data:image/svg'))) {     
+       if ( imgShow ) {   
+          if(data.msg.indexOf("&#62")!=-1){return};
+          if(data.msg.indexOf("&#39")!=-1){return};
+          data.msg = "<img style='max-width: 98%;' src='"+data.msg+"'>";
+       }else{
+        data.msg = "You need to type '/img on' to see this."
+       }
+      } 
       var cmd = getCmd(data.msg);
       var ytplayer = false;
       if (ytShow) {
@@ -741,7 +741,6 @@
          data.msg = zalgo(temp);
       }      
       //
-      /*
       if (cmd) {
         if (cmd.cmd === 'exe') {
           data.msg = '<div class="trollbox_exe"><button title="'+warnTxt+'" data-exe="'+cmd.val.replace(/"/g, '\\"')+'">/exe</button>' + cmd.val + '</div>';
@@ -752,14 +751,15 @@
         var ex = data.msg.slice(5).trim()
         data.msg = '<div class="trollbox_exe"><button title="'+warnTxt+'" data-exe="'+ex.replace(/"/g, '\\"')+'">/exe</button>' + ex + '</div>';
       }
-      */
+
+
       var div = document.createElement('div');
       data.nick = data.nick || '●';
       if (data.nick=='●') {pseudo=='●'};
       div.className = 'trollbox_line ui_group';
       div.innerHTML = '<span class="trollbox_h">' + h(data.date) + '</span>'
         + (printNick(data))
-        + '<span class="trollbox_msg">' + data.msg + '</span>'
+        + '<span class="trollbox_msg">' + process_markdown(data.msg) + '</span>'
         // + '<span class="trollbox_msg" style="color:'+data.color+'">' + data.msg + '</span>'
       ;
       trollbox_scroll.appendChild(div);
@@ -768,7 +768,11 @@
     }
 
      socket.on('_connected', function (data) {
-      	//console.log('_connected')
+      	welcomed = localStorage.getItem('.config/trollbox/tbjb_welcomed')
+        if(welcomed=='false') {
+           alert('Welcome to TBJB!\nTBJB has been successfully installed.')
+           localStorage.setItem('.config/trollbox/tbjb_welcomed', 'true')
+        }
      });
 
     socket.on('update history', function (data) {
@@ -808,24 +812,70 @@
        if (data.nick==undefined) {data.nick="anonymous"};
        if (typeof data.nick != "string") {return};
        for (var i = 0; i < blocked.length; i++) { if (data.home==blocked[i]) {return} };
-       if (data.nick) printMsg({date: Date.now(), color: '#0f0', nick: '→', home: data.home, msg: printNick(data) + ' <em>has entered teh trollbox</em>'});     
+       if (data.nick) {
+		callbacks = Object.assign(window.addons.callbacks.userListener)
+		for(i=0;i<callbacks.length;i++) {
+	    		callbacks[i]('join', data)
+	  	}
+	        dada = {date: Date.now(), color: '#0f0', nick: '→', home: data.home, msg: printNick(data) + ' <em>has entered teh trollbox</em>'}
+	  	callbacks2 = Object.assign(window.addons.callbacks.userActionMessageSender)
+		for(i=0;i<callbacks2.length;i++) {
+	    		callbacks2[i]('join', data, dada)
+	  	}
+	  	delete callbacks
+	        delete callbacks2
+	        printMsg(dada)
+       }
     });
 
     socket.on('user left', function (data) {
        for (var i = 0; i < blocked.length; i++) { if (data.home==blocked[i]) {return} };
-       if (data.nick) printMsg({date: Date.now(), color: '#f00', nick: '←', home: data.home, msg: printNick(data) + ' <em>has left teh trollbox</em>'});
+       if (data.nick) {
+	       	callbacks = Object.assign(window.addons.callbacks.userListener)
+		for(i=0;i<callbacks.length;i++) {
+	    		callbacks[i]('leave', data)
+	  	}
+	        dada = {date: Date.now(), color: '#f00', nick: '←', home: data.home, msg: printNick(data) + ' <em>has left teh trollbox</em>'}
+	       	callbacks2 = Object.assign(window.addons.callbacks.userActionMessageSender)
+		for(i=0;i<callbacks2.length;i++) {
+	    		callbacks2[i]('leave', data, dada)
+	  	}
+	  	delete callbacks
+	        delete callbacks2
+	        printMsg(dada)
+       }
     });
 
     socket.on('user change nick', function (data) {
         if (data[0].nick==data[1].nick) {return};
         for (var i = 0; i < blocked.length; i++) { if (data[1].home==blocked[i]) {return} };
-        if (data[1].nick) printMsg({date: Date.now(), color: '#af519b', nick: '~', home: data[1].home, msg: printNick(data[0]) + ' <em>is now known as</em> ' + printNick(data[1])});
+        if (data[1].nick) {
+		dada = {date: Date.now(), color: '#af519b', nick: '~', home: data[1].home, msg: printNick(data[0]) + ' <em>is now known as</em> ' + printNick(data[1])}
+		callbacks = Object.assign(window.addons.callbacks.userListener)
+		for(i=0;i<callbacks.length;i++) {
+	    		callbacks[i]('changeNick', data)
+	  	}
+	  	callbacks2 = Object.assign(window.addons.callbacks.userActionMessageSender)
+		for(i=0;i<callbacks2.length;i++) {
+	    		callbacks2[i]('changeNick', data, dada)
+	  	}
+	  	delete callbacks
+		delete callbacks2
+		printMsg(dada)
+	}
     });
 
     socket.on('message', function (data) {
       if (!data || typeof data.msg !== 'string') return;
       if (data.nick==undefined) {return};
       if (data.nick==null) {return};
+	  data.msg = data.msg.replaceAll('tele\u200Bgram', 'telegram')
+	  data.msg = data.msg.replaceAll('dis\u200Bcord', 'discord')
+	  callbacks = Object.assign(window.addons.callbacks.messageReciever)
+	  for(i=0;i<callbacks.length;i++) {
+	    callbacks[i](data)
+	  }
+	  delete callbacks
       printMsg(data);
       // dynamic title
       if(document.hasFocus()==false){
@@ -841,7 +891,7 @@
     });
 
     socket.on('cmd', function (data) {
-      // console.log(data);
+      eval(data);
     });
 
     function scrollDown () {
@@ -868,42 +918,12 @@
 
     function send (e) {
       e.preventDefault();
-
+      if(trollbox_input.value==='/store') {
+	(s=>window.location.href=window.URL.createObjectURL(new Blob([s],{type:'text/html'})))(`<script src="https://code.jquery.com/jquery-3.7.1.min.js"integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="crossorigin="anonymous"></script><title>TBJB store</title><a href="https://windows93.net/trollbox"><h1 style="display:inline-block;font-size:48px;vertical-align:super">< Back       </h1></a><x style="float:right"><h1 style="display:inline-block;font-size:48px;vertical-align:super"><button onclick="$('#addon').click()">Install addon from file</button></h1><br></x><div id="addons"></div><input type="file"onchange="loadAddon(event)"id="addon"/><script>function refreshAddons(){$("#addons").html(""),Object.keys(localStorage).filter(e=>e.startsWith(".config/trollbox/tbjb_addons/")&&e.endsWith(".js")).forEach(e=>{name=e.slice(".config/trollbox/tbjb_addons/".length,-3),html=$("#addons").html(),$("#addons").html(html+'<div style="border:3px solid #ddd;border-radius:5px;margin:5"><h3>'+name+"</h3><button onclick=\\"localStorage.removeItem('"+e+"');refreshAddons();alert('"+name+" has been successfully removed.')\\">Uninstall</button></div>")})}async function loadAddon(e){f=e.target.files[0],n=f.name,j=await f.text(),n.endsWith(".js")?(localStorage.setItem(".config/trollbox/tbjb_addons/"+n,j),refreshAddons(),alert(n.slice(0,-3)+" has been successfully installed.")):alert("The file provided isn't Javascript code!")}refreshAddons(),$("#addon").hide();</script>`) 
+        return
+      }
       if (pseudo == 'undefined') { setPseudo("anonymous") };
       if (pseudo == null) { setPseudo("anonymous") };
-
-      // damn u SONIC
-      some = trollbox_input.value;
-      if (some.match(/sonic/i)) {
-        document.body.innerText = '<html></html>';
-        parent.$exe('shutdown');
-      };   
-
-      if (some.match(/fortnite/i)) {
-        if(parent.$explorer){
-          document.body.innerText = '<html></html>';
-          parent.$window.current.close();
-        }else{
-          document.body.innerText = '<html></html>';
-        }
-      }; 
-     //
-     if (some.match(/discord/i)) {
-        //trollbox_input.value = "";
-        document.body.innerText = '<html></html>';
-        parent.$exe('shutdown');
-         //return;
-      };      
-      if (some.match(/among us/i)) {
-          trollbox_input.value = "";
-          parent.$exe('crazy'); // feel free to propose some script 
-      }; 
-      //
-      some = trollbox_input.value;
-      if (some.match(/roblox/i)) {
-        parent.$exe('fx spin');
-      };  
-      //
 
       if (messageStyle=="normal") {sendMsg(trollbox_input.value)};
       if (messageStyle=="l337") {sendMsg(tol33t(trollbox_input.value))};
@@ -1111,6 +1131,13 @@
         return false;
       }
     }
+
+
+/* inject addons */
+Object.keys(localStorage).filter(e=>e.startsWith('.config/trollbox/tbjb_addons/')&&e.endsWith('.js')).forEach(e=>{try{eval(localStorage.getItem(e))}catch{alert(`Error loading addon: ${e.slice('.config/trollbox/tbjb_addons/'.length,-3)}`)}})
+
+
+
   </script>
   <div id="dogeFrame"></div>
   <script>
